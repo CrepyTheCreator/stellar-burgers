@@ -2,22 +2,23 @@ import { FC, useMemo } from 'react';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient } from '@utils-types';
+import { RootState, useDispatch, useSelector } from '../../services/store';
+import { getAllIngredients } from '../../slices/IngredientsSlice/ingredientsSlice';
+import { useParams } from 'react-router-dom';
+import {
+  getFeedOrdersById,
+  getFeedThunk
+} from '../../slices/FeedSlice/feedSlice';
 
 export const OrderInfo: FC = () => {
-  /** TODO: взять переменные orderData и ingredients из стора */
-  const orderData = {
-    createdAt: '',
-    ingredients: [],
-    _id: '',
-    status: '',
-    name: '',
-    updatedAt: 'string',
-    number: 0
-  };
+  const dispatch = useDispatch();
+  const { number } = useParams();
+  if (!number) return null;
+  const orderData = useSelector((state: RootState) =>
+    getFeedOrdersById(state, Number(number))
+  );
+  const ingredients: TIngredient[] = useSelector(getAllIngredients);
 
-  const ingredients: TIngredient[] = [];
-
-  /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {
     if (!orderData || !ingredients.length) return null;
 
@@ -60,6 +61,7 @@ export const OrderInfo: FC = () => {
   }, [orderData, ingredients]);
 
   if (!orderInfo) {
+    dispatch(getFeedThunk());
     return <Preloader />;
   }
 

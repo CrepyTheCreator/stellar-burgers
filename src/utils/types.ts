@@ -33,8 +33,27 @@ export type TOrdersData = {
 };
 
 export type TUser = {
+  user: { email: string; name: string } | null;
   email: string;
   name: string;
 };
+
+export type TUserState = {
+  isAuthChecked: boolean;
+  isAuthenticated: boolean;
+  data: {
+    email: string;
+    name: string;
+  };
+  userOrders: TOrder[];
+  orderLoading: boolean;
+  loginUserError: string | null;
+  loginUserRequest: boolean | null;
+};
+
+export interface ConstructorState {
+  bun: TIngredient | null;
+  ingredients: TIngredient[];
+}
 
 export type TTabMode = 'bun' | 'sauce' | 'main';

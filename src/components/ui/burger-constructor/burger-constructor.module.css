@@ -1,5 +1,6 @@
 .burger_constructor {
   width: 600px;
+  max-height: 782px;
   color: #f2f2f3;
   display: flex;
   flex-direction: column;

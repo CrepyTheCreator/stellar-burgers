@@ -1,11 +1,13 @@
-import { getFeedsApi } from '@api';
+import { getFeedsApi, getOrderByNumberApi } from '@api';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { TOrdersData } from '@utils-types';
+import { TOrder, TOrdersData } from '@utils-types';
 
 interface FeedState {
   allItems: TOrdersData;
   isLoading: boolean;
   error: string | null;
+  modalOrder: TOrder[] | null;
+  modalLoading: boolean;
 }
 
 const initialState: FeedState = {
@@ -14,6 +16,8 @@ const initialState: FeedState = {
     total: 0,
     totalToday: 0
   },
+  modalOrder: null,
+  modalLoading: false,
   isLoading: true,
   error: null
 };
@@ -31,6 +35,14 @@ export const getFeedThunk = createAsyncThunk<
   }
 });
 
+export const getOrderByNumber = createAsyncThunk(
+  'orders/fetchByMuber',
+  async (number: number) => {
+    const data = await getOrderByNumberApi(number);
+    return data.orders;
+  }
+);
+
 const feedSlice = createSlice({
   name: 'feed',
   initialState,
@@ -42,7 +54,9 @@ const feedSlice = createSlice({
     getFeedAll: (state) => state.allItems,
     getFeedLoading: (state) => state.isLoading,
     getFeedOrdersById: (state, number: number) =>
-      state.allItems.orders.find((el) => el.number === number)
+      state.allItems.orders.find((el) => el.number === number),
+    getModalOrder: (state) => state.modalOrder,
+    getModalLoading: (state) => state.modalLoading
   },
   extraReducers: (builder) => {
     builder
@@ -57,11 +71,28 @@ const feedSlice = createSlice({
       .addCase(getFeedThunk.rejected, (state) => {
         state.isLoading = false;
         state.error = 'Ошибка при загрузке заказов';
+      })
+      .addCase(getOrderByNumber.pending, (state) => {
+        state.modalLoading = true;
+        state.modalOrder = null;
+      })
+      .addCase(getOrderByNumber.fulfilled, (state, action) => {
+        state.modalOrder = action.payload;
+        state.modalLoading = false;
+      })
+      .addCase(getOrderByNumber.rejected, (state) => {
+        state.modalLoading = false;
       });
   }
 });
 
 export const { setOrders } = feedSlice.actions;
-export const { getFeedOrders, getFeedLoading, getFeedAll, getFeedOrdersById } =
-  feedSlice.selectors;
+export const {
+  getFeedOrders,
+  getFeedLoading,
+  getFeedAll,
+  getFeedOrdersById,
+  getModalLoading,
+  getModalOrder
+} = feedSlice.selectors;
 export default feedSlice.reducer;

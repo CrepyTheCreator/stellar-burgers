@@ -67,6 +67,14 @@ function App() {
             }
           />
           <Route
+            path='/profile/orders/:number'
+            element={
+              <Modal title='' onClose={handleCloseModal}>
+                <OrderInfo />
+              </Modal>
+            }
+          />
+          <Route
             path='/feed/:number'
             element={
               <Modal title='' onClose={handleCloseModal}>

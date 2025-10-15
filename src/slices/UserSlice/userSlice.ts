@@ -4,7 +4,8 @@ import {
   loginUserApi,
   refreshToken,
   registerUserApi,
-  TRegisterData
+  TRegisterData,
+  updateUserApi
 } from '@api';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { TOrder, TUserState } from '@utils-types';
@@ -58,6 +59,17 @@ export const registerUser = createAsyncThunk(
     }
     setCookie('accessToken', data.accessToken);
     localStorage.setItem('refreshToken', data.refreshToken);
+    return data.user;
+  }
+);
+
+export const updateUserData = createAsyncThunk(
+  'user/updateUserData',
+  async ({ email, name, password }: TRegisterData, thunkAPI) => {
+    const data = await updateUserApi({ email, name, password });
+    if (!data?.success) {
+      return thunkAPI.rejectWithValue(data);
+    }
     return data.user;
   }
 );
@@ -153,6 +165,19 @@ const userSlice = createSlice({
       .addCase(getUserOrdersThunk.fulfilled, (state, action) => {
         state.orderLoading = false;
         state.userOrders = action.payload;
+      })
+      .addCase(updateUserData.pending, (state) => {
+        state.loginUserRequest = true;
+        state.loginUserError = null;
+      })
+      .addCase(updateUserData.rejected, (state, action) => {
+        state.loginUserRequest = false;
+      })
+      .addCase(updateUserData.fulfilled, (state, action) => {
+        state.data = action.payload;
+        state.loginUserRequest = false;
+        state.isAuthenticated = true;
+        state.isAuthChecked = true;
       });
   }
 });

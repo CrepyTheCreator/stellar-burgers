@@ -61,7 +61,7 @@ function App() {
           <Route
             path='/ingredients/:id'
             element={
-              <Modal title='' onClose={handleCloseModal}>
+              <Modal title='Детали ингредиента' onClose={handleCloseModal}>
                 <IngredientDetails />
               </Modal>
             }

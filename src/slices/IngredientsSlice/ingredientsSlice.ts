@@ -36,8 +36,11 @@ export const getIngredientsThunk = createAsyncThunk<
   try {
     const data = await getIngredientsApi();
     return data;
-  } catch (error: any) {
-    return rejectWithValue(error.message || 'Неизвестная ошибка');
+  } catch (error) {
+    if (error instanceof Error) {
+      return rejectWithValue(error.message || 'Неизвестная ошибка');
+    }
+    return rejectWithValue('Неизвестная ошибка');
   }
 });
 

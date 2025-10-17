@@ -56,4 +56,9 @@ export interface ConstructorState {
   ingredients: TIngredient[];
 }
 
+export interface TErorr {
+  success: string;
+  message: string;
+}
+
 export type TTabMode = 'bun' | 'sauce' | 'main';

@@ -8,7 +8,7 @@ import {
   updateUserApi
 } from '@api';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { TOrder, TUserState } from '@utils-types';
+import { TErorr, TOrder, TUserState } from '@utils-types';
 import { deleteCookie, getCookie, setCookie } from '../../utils/cookie';
 
 const initialState: TUserState = {
@@ -45,8 +45,11 @@ export const getUserOrdersThunk = createAsyncThunk<
   try {
     const data = await getOrdersApi();
     return data;
-  } catch (error: any) {
-    return thunkAPI.rejectWithValue(error.message || 'Неизвестная ошибка');
+  } catch (error) {
+    if (error instanceof Error) {
+      return thunkAPI.rejectWithValue(error.message || 'Неизвестная ошибка');
+    }
+    return thunkAPI.rejectWithValue('Неизвестная ошибка');
   }
 });
 

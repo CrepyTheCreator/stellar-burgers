@@ -16,6 +16,6 @@
 .main {
   display: flex;
   justify-content: space-between;
-  height: 100%;
+  height: calc(100vh - 150px - 39.59px);
   overflow: hidden;
 }

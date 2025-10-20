@@ -32,7 +32,11 @@ function App() {
   }, [dispatch]);
 
   const handleCloseModal = () => {
-    navigate(-1);
+    if (background) {
+      navigate(background.pathname);
+    } else {
+      navigate(-1);
+    }
   };
 
   return (

@@ -8,7 +8,11 @@ import reducer, {
 } from './userSlice';
 import { TOrder } from '@utils-types';
 
-const userData = { name: 'Test', email: 'test@mail.com' };
+const userData = {
+  user: { name: 'Test', email: 'test@mail.com' },
+  name: 'Test',
+  email: 'test@mail.com'
+};
 const orders: TOrder[] = [
   {
     _id: '1',
@@ -63,7 +67,10 @@ describe('userSlice', () => {
   });
 
   it('checkUserAuth fulfilled устанавливает isAuthenticated=true', () => {
-    const state = reducer(undefined, checkUserAuth.fulfilled(userData));
+    const state = reducer(
+      undefined,
+      checkUserAuth.fulfilled(userData, '', undefined)
+    );
     expect(state.data).toEqual(userData);
     expect(state.isAuthenticated).toBe(true);
   });

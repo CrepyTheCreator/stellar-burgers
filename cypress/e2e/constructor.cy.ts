@@ -19,20 +19,22 @@ describe('burger constructor', () => {
       fixture: 'order.json'
     }).as('order');
 
-    // Открываем главную страницу
     cy.visit('/');
     cy.wait('@ingredients');
   });
 
+  afterEach(() => {
+    cy.clearCookie('accessToken');
+    localStorage.clear();
+  });
+
   it('добавление ингредиента через кнопку на карточке', () => {
-    // Находим первую карточку и внутри ищем кнопку "Добавить"
     cy.get('[data-testid="ingredient-card"]')
       .first()
       .within(() => {
         cy.contains('button', 'Добавить').click();
       });
 
-    // Проверяем, что ингредиент появился в конструкторе
     cy.get('[data-testid="constructor-area"]').should(
       'contain.text',
       'Булка 1'
@@ -40,30 +42,47 @@ describe('burger constructor', () => {
   });
 
   it('создание заказа с добавленным ингредиентом', () => {
-    // Добавляем ингредиент
     cy.get('[data-testid="ingredient-card"]')
       .first()
       .within(() => {
         cy.contains('button', 'Добавить').click();
       });
 
-    // Кликаем кнопку "Оформить заказ"
     cy.get('[data-testid="order-button"]').click();
-
-    // Ждём запрос на создание заказа
     cy.wait('@order');
 
-    // Проверяем модальное окно с номером заказа
     cy.get('[data-testid="modal"]').should('exist').and('contain.text', '7777');
 
-    // Закрываем модалку
     cy.get('[data-testid="modal-close"]').click();
     cy.get('[data-testid="modal"]').should('not.exist');
 
-    // Проверяем, что конструктор очищен
     cy.get('[data-testid="constructor-area"]').should(
       'not.contain.text',
       'Булка 1'
     );
+  });
+
+  it('открытие/закрытие модалки описания ингредиента', () => {
+    cy.get('[data-testid="ingredient-card"]').first().click();
+    cy.get('[data-testid="modal"]').should('exist');
+
+    cy.get('[data-testid="modal-close"]').click();
+    cy.get('[data-testid="modal"]').should('not.exist');
+  });
+
+  it('корректные данные ингредиента в модалке', () => {
+    cy.fixture('ingredients.json').then(({ data }) => {
+      const first = data[0];
+
+      cy.get('[data-testid="ingredient-card"]').first().click();
+
+      cy.get('[data-testid="modal"]').within(() => {
+        cy.contains(first.name).should('exist');
+        cy.contains(first.calories.toString()).should('exist');
+        cy.contains(first.proteins.toString()).should('exist');
+        cy.contains(first.fat.toString()).should('exist');
+        cy.contains(first.carbohydrates.toString()).should('exist');
+      });
+    });
   });
 });

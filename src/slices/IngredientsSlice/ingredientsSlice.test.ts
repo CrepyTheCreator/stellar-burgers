@@ -5,7 +5,7 @@ import reducer, {
   getIngredientsThunk,
   createOrderThunk
 } from './ingredientsSlice';
-import { TIngredient, ConstructorState } from '@utils-types';
+import { TIngredient, ConstructorState, TOrder } from '@utils-types';
 
 const bun: TIngredient = {
   _id: 'bun1',
@@ -32,6 +32,16 @@ const main: TIngredient = {
   image: '',
   image_large: '',
   image_mobile: ''
+};
+
+const order: TOrder = {
+  _id: '1',
+  status: 'done',
+  name: 'Заказ 1',
+  createdAt: '',
+  updatedAt: '',
+  number: 1,
+  ingredients: []
 };
 
 describe('ingredientsSlice', () => {
@@ -105,7 +115,7 @@ describe('ingredientsSlice', () => {
     const state = reducer(
       undefined,
       createOrderThunk.fulfilled(
-        { success: true, order: {}, name: 'Заказ' },
+        { success: true, order: order, name: 'Заказ' },
         '',
         constructor
       )

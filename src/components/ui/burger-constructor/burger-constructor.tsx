@@ -20,7 +20,10 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
 }) => {
   const ingredient = constructorItems?.ingredients || [];
   return (
-    <section className={styles.burger_constructor}>
+    <section
+      className={styles.burger_constructor}
+      data-testid='constructor-area'
+    >
       {constructorItems.bun ? (
         <div className={`${styles.element} mb-4 mr-4`}>
           <ConstructorElement
@@ -81,6 +84,7 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
           <CurrencyIcon type='primary' />
         </div>
         <Button
+          data-testid='order-button'
           htmlType='button'
           type='primary'
           size='large'
@@ -90,7 +94,11 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
       </div>
 
       {orderRequest && (
-        <Modal onClose={closeOrderModal} title={'Оформляем заказ...'}>
+        <Modal
+          onClose={closeOrderModal}
+          data-testid='modal'
+          title={'Оформляем заказ...'}
+        >
           <Preloader />
         </Modal>
       )}
